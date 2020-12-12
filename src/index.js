@@ -1,4 +1,6 @@
-// Variables
+/*
+ * Variables
+ * */
 const mascotaInput = document.getElementById("mascota");
 const propietarioInput = document.getElementById("propietario");
 const telefonoInput = document.getElementById("telefono");
@@ -8,11 +10,18 @@ const sintomasInput = document.getElementById("sintomas");
 const formulario = document.getElementById("nueva-cita");
 const contenedorCitas = document.getElementById("citas");
 
-// Clases
+/*
+ * Clases
+ * */
 class Citas {
   // Crea en un arreglo las citas
   constructor() {
     this.citas = [];
+  }
+
+  agregarCita(cita) {
+    // Agrega nueva cita al arreglo citas, por medio de citaObj
+    this.citas = [...this.citas, cita];
   }
 }
 
@@ -37,11 +46,15 @@ class UserInterface {
   }
 }
 
-// Instancias de classes
+/*
+ * Instancias
+ * */
 const userInterface = new UserInterface();
 const administrarCitas = new Citas();
 
-// Eventos
+/*
+ * Eventos
+ * */
 eventListeners();
 function eventListeners() {
   mascotaInput.addEventListener("input", datosCita);
@@ -53,7 +66,9 @@ function eventListeners() {
   formulario.addEventListener("submit", nuevaCita);
 }
 
-// Objetos literales
+/*
+ * Objetos literales
+ * */
 const citaObj = {
   // Crea objeto literal con valores vacios
   mascota: "",
@@ -64,7 +79,9 @@ const citaObj = {
   sintomas: "",
 };
 
-// Funciones
+/*
+ * Funciones
+ * */
 function datosCita(e) {
   // Mete en los valores vacios de citaObj el value del input que escriba el user
   citaObj[e.target.name] = e.target.value;
@@ -88,4 +105,27 @@ function nuevaCita(e) {
     userInterface.imprimirAlerta("Todos los campos son obligatorios", "error");
     return;
   }
+
+  // Agrega nuevo atributo id a citaObj
+  citaObj.id = Date.now();
+
+  /* Crear nueva cita con una copia de citaObj global, sino se pasa como copia
+  hay problemas cuando se crea una nueva cita */
+  administrarCitas.agregarCita({ ...citaObj });
+
+  // Reinicia el objeto citaObj para la validacion
+  reiniciarObjeto();
+
+  // Limpia formulario una vez que se agrega una cita
+  formulario.reset();
+}
+
+function reiniciarObjeto() {
+  // Limpia el objeto citaObj
+  citaObj.mascota = "";
+  citaObj.propietario = "";
+  citaObj.telefono = "";
+  citaObj.fecha = "";
+  citaObj.hora = "";
+  citaObj.sintomas = "";
 }
