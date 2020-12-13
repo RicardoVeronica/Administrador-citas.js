@@ -23,6 +23,11 @@ class Citas {
     // Agrega nueva cita al arreglo citas, por medio de citaObj
     this.citas = [...this.citas, cita];
   }
+
+  eliminarCita(id) {
+    // Elimina cita por id
+    this.citas = this.citas.filter((cita) => cita.id !== id);
+  }
 }
 
 class UserInterface {
@@ -87,6 +92,12 @@ class UserInterface {
       sintomasParrafo.innerHTML = `
         <span class="font-weight-bolder">Sintomas: </span>${sintomas}
       `;
+      const btnEliminar = document.createElement("button");
+      btnEliminar.classList.add("btn", "btn-danger", "mr-2");
+      btnEliminar.textContent = "Eliminar";
+      btnEliminar.onclick = () => {
+        eliminarCita(id);
+      };
 
       divCita.appendChild(mascotaParrafo);
       divCita.appendChild(propietarioParrafo);
@@ -94,9 +105,8 @@ class UserInterface {
       divCita.appendChild(fechaParrafo);
       divCita.appendChild(horaParrafo);
       divCita.appendChild(sintomasParrafo);
+      divCita.appendChild(btnEliminar);
       contenedorCitas.appendChild(divCita);
-
-      console.log(divCita);
     });
   }
 
@@ -193,4 +203,15 @@ function reiniciarObjeto() {
   citaObj.fecha = "";
   citaObj.hora = "";
   citaObj.sintomas = "";
+}
+
+function eliminarCita(id) {
+  // Elimina cita
+  administrarCitas.eliminarCita(id);
+
+  // Imprime mensaje
+  userInterface.imprimirAlerta("La cita se elimino correctamente");
+
+  // Imprime citas
+  userInterface.imprimirCitas(administrarCitas);
 }
