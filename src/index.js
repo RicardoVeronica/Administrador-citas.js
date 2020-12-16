@@ -117,9 +117,8 @@ class UserInterface {
         const btnEditar = document.createElement("button");
         btnEditar.classList.add("btn", "btn-info", "mr-2");
         btnEditar.textContent = "Editar";
-        btnEditar.onclick = () => {
-          cargarEdicion(cita);
-        };
+        const cita = cursor.value;
+        btnEditar.onclick = () => cargarEdicion(cita);
 
         divCita.appendChild(mascotaParrafo);
         divCita.appendChild(propietarioParrafo);
@@ -216,10 +215,22 @@ function nuevaCita(e) {
 
     administrarCitas.editarCita({ ...citaObj });
 
-    formulario.querySelector("button[type='submit']").textContent =
-      "Crear cita";
+    // Edita el indexedDB
+    const transaction = DB.transaction(["citas"], "readwrite");
+    const objectStore = transaction.objectStore("citas");
 
-    editando = false;
+    objectStore.put(citaObj);
+
+    transaction.oncomplete = () => {
+      formulario.querySelector("button[type='submit']").textContent =
+        "Crear cita";
+
+      editando = false;
+    };
+
+    transaction.onerror = () => {
+      console.log("Error al guardar la edicion de la cita en indexedDB");
+    };
   } else {
     // Agrega nuevo atributo id a citaObj
     citaObj.id = Date.now();
