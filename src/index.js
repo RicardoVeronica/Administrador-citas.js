@@ -277,14 +277,25 @@ function reiniciarObjeto() {
 }
 
 function eliminarCita(id) {
-  // Elimina cita
-  administrarCitas.eliminarCita(id);
+  // Elimina cita desde indexedDB
+  // administrarCitas.eliminarCita(id);
+  const transaction = DB.transaction(["citas"], "readwrite");
+  const objectStore = transaction.objectStore("citas");
 
-  // Imprime mensaje
-  userInterface.imprimirAlerta("La cita se elimino correctamente");
+  objectStore.delete(id);
 
-  // Imprime citas
-  userInterface.imprimirCitas();
+  transaction.oncomplete = () => {
+    console.log(`Cita ${id} eliminada correctamente`);
+    // Imprime mensaje
+    userInterface.imprimirAlerta("La cita se elimino correctamente");
+
+    // Imprime citas
+    userInterface.imprimirCitas();
+  };
+
+  transaction.onerror = () => {
+    console.log("Error al tratar de eliminar la cita");
+  };
 }
 
 function cargarEdicion(cita) {
